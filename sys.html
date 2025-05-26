@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Visualisation professionnelle de maquette architecturale en réalité augmentée">
+  <title>Maquette 3D | Réalité Augmentée</title>
+  <link rel="preload" href="https://unpkg.com/@google/model-viewer@^2.4.1/dist/model-viewer.min.js" as="script">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta property="og:title" content="Maquette Architecturale 3D en Réalité Augmentée">
+  <meta property="og:description" content="Visualisation interactive professionnelle de projets architecturaux">
+  <meta property="og:image" content="https://example.com/preview.jpg">
+  <meta property="og:url" content="https://example.com">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --primary-dark: #1e40af;
+      --text-color: #333;
+      --text-light: #64748b;
+      --bg-color: #f8fafc;
+      --card-bg: #fff;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --transition: all 0.3s ease;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      line-height: 1.6;
+      background: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+    }
+    .container { max-width: 1200px; margin: auto; padding: 2rem 1rem; }
+    header { text-align: center; margin-bottom: 2.5rem; }
+    h1 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: clamp(1.8rem, 5vw, 2.5rem);
+    }
+    .subtitle {
+      color: var(--text-light);
+      font-size: clamp(1rem, 2vw, 1.1rem);
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .ar-container {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    model-viewer {
+      width: 100%;
+      height: 70vh;
+      min-height: 500px;
+      max-height: 800px;
+      --poster-color: transparent;
+      background-color: #f5f5f5;
+    }
+    .ar-button {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: absolute;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      box-shadow: var(--shadow-sm);
+    }
+    .ar-button:hover {
+      background: var(--primary-dark);
+      transform: translateX(-50%) scale(1.05);
+    }
+    .loading-spinner {
+      display: inline-block;
+      width: 2rem;
+      height: 2rem;
+      border: 3px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s linear infinite;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .instructions {
+      background: #f1f5f9;
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      margin: 2rem 0;
+    }
+    .instructions h3 { margin-bottom: 1rem; color: var(--primary-color); }
+    .instructions ol { padding-left: 1.5rem; }
+    .instructions li { margin-bottom: 0.5rem; }
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin: 2.5rem 0;
+    }
+    .feature-card {
+      background: var(--card-bg);
+      padding: 1.5rem;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    }
+    .feature-card h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    footer {
+      text-align: center;
+      margin-top: 4rem;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      padding: 1.5rem 0;
+      border-top: 1px solid #e2e8f0;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Maquette Architecturale 3D</h1>
+      <p class="subtitle">Visualisation en Réalité Augmentée Professionnelle</p>
+    </header>
+
+    <div class="ar-container">
+      <model-viewer
+        src="https://yourdomain.com/models/maquette.glb"
+        alt="Maquette architecturale 3D interactive"
+        ar
+        ar-modes="webxr scene-viewer quick-look"
+        camera-controls
+        auto-rotate
+        shadow-intensity="1"
+        environment-image="neutral"
+        exposure="0.8"
+        interaction-prompt="none"
+        camera-orbit="0deg 75deg 105%"
+        camera-target="0m 0m 0m"
+        field-of-view="30deg"
+        loading="eager"
+        reveal="auto"
+        aria-label="Modèle 3D de maquette architecturale">
+
+        <button class="ar-button" slot="ar-button" aria-label="Activer la réalité augmentée">
+          <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+          </svg>
+          Voir en Réalité Augmentée
+        </button>
+
+        <div slot="loading">
+          <div class="loading-spinner" aria-hidden="true"></div>
+          <span class="sr-only">Chargement du modèle 3D...</span>
+        </div>
+      </model-viewer>
+    </div>
+
+    <section class="instructions" aria-labelledby="instructions-heading">
+      <h3 id="instructions-heading">Comment utiliser :</h3>
+      <ol>
+        <li>Scannez le QR Code avec votre smartphone</li>
+        <li>Ouvrez le lien dans Chrome (Android) ou Safari (iPhone)</li>
+        <li>Cliquez sur "Voir en Réalité Augmentée"</li>
+        <li>Pointez votre caméra vers une surface plane</li>
+      </ol>
+    </section>
+
+    <section class="features" aria-labelledby="features-heading">
+      <h2 id="features-heading" class="sr-only">Fonctionnalités</h2>
+      <article class="feature-card">
+        <h3>🔍 Zoom & Rotation</h3>
+        <p>Interagissez avec le modèle avec le pinch-to-zoom et la rotation.</p>
+      </article>
+      <article class="feature-card">
+        <h3>📱 Multiplateforme</h3>
+        <p>Compatible avec les smartphones iOS et Android récents.</p>
+      </article>
+      <article class="feature-card">
+        <h3>🔄 Mises à jour en temps réel</h3>
+        <p>Le modèle se met automatiquement à jour sans rechargement.</p>
+      </article>
+    </section>
+
+    <footer>
+      <p>© <span id="current-year"></span> Votre Société | Tous droits réservés</p>
+      <p>Technologie WebAR avec Google Model Viewer</p>
+    </footer>
+  </div>
+
+  <script type="module" src="https://unpkg.com/@google/model-viewer@^2.4.1/dist/model-viewer.min.js"></script>
+  <script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(e => console.log('SW error:', e));
+      });
+    }
+  </script>
+</body>
+</html>
