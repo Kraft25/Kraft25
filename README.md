@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Maquette 3D en AR</title>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+   
 </head>
 <body>
     <h1>Maquette Architecture</h1>
